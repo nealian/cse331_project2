@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F39E1D9A19E098A800DBFB0C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F39E1D9919E098A800DBFB0C /* main.cpp */; };
+		F39E1DA219E0A69300DBFB0C /* AddressSplit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F39E1DA019E0A69300DBFB0C /* AddressSplit.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		F39E1D9619E098A800DBFB0C /* CacheSimulatorLab1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CacheSimulatorLab1; sourceTree = BUILT_PRODUCTS_DIR; };
 		F39E1D9919E098A800DBFB0C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		F39E1DA019E0A69300DBFB0C /* AddressSplit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddressSplit.cpp; sourceTree = "<group>"; };
+		F39E1DA119E0A69300DBFB0C /* AddressSplit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressSplit.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				F39E1D9919E098A800DBFB0C /* main.cpp */,
+				F39E1DA019E0A69300DBFB0C /* AddressSplit.cpp */,
+				F39E1DA119E0A69300DBFB0C /* AddressSplit.h */,
 			);
 			path = CacheSimulatorLab1;
 			sourceTree = "<group>";
@@ -119,6 +124,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F39E1D9A19E098A800DBFB0C /* main.cpp in Sources */,
+				F39E1DA219E0A69300DBFB0C /* AddressSplit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +238,7 @@
 				F39E1D9F19E098A800DBFB0C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
