@@ -45,3 +45,5 @@ profile
 *.moved-aside
 DerivedData
 .idea/
+*.xcodeproj
+*.dSYM

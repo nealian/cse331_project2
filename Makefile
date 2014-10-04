@@ -1,0 +1,5 @@
+all: CacheSimulatorLab1/CacheSimulatorLab1/CacheSimulatorLab1
+
+CacheSimulatorLab1/CacheSimulatorLab1/CacheSimulatorLab1:
+	cd CacheSimulatorLab1/CacheSimulatorLab1
+	make
