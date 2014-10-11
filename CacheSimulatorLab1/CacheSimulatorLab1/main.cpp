@@ -21,11 +21,12 @@
 #include "AddressSplit.h"
 #include "NoWriteAllocate.h"
 #include "SearchCache.h"
+#include "CacheUpdate.h"
 
 using namespace std;
 
-void writeToCache(struct configData, struct addressSegments, struct traceLine, string []);
-void readFromCache(struct configData, struct addressSegments, struct traceLine, string []);
+void writeToCache(struct configData, struct addressSegments, struct traceLine, string [], int, int *, int *);
+void readFromCache(struct configData, struct addressSegments, struct traceLine, string [], int, int *, int *);
 string intToBinaryString(unsigned int);
 
 int main(int argc, const char * argv[]) {
@@ -36,8 +37,9 @@ int main(int argc, const char * argv[]) {
     struct configData configDataFilled = readConfig(configFilename);
     const struct addressSegments addressSegmentsFilled = {log(configDataFilled.blockSize) / log(2),
 							  configDataFilled.associativity ? log(configDataFilled.cacheSize*1024 / (configDataFilled.associativity * configDataFilled.blockSize)) / log(2) : 0,
-							  ADDRESS_SIZE - (log(configDataFilled.blockSize) / log(2)) - (log(configDataFilled.cacheSize*1024 / (configDataFilled.associativity * configDataFilled.blockSize)) / log(2))};
+							  ADDRESS_SIZE - (log(configDataFilled.blockSize) / log(2)) - (configDataFilled.associativity ? (log(configDataFilled.cacheSize*1024 / (configDataFilled.associativity * configDataFilled.blockSize)) / log(2)) : 0)};
     int cacheSize = configDataFilled.cacheSize * 1024 / ADDRESS_SIZE;
+    int cachedElements = 0, fifoCacheLocation = 0;
     string cache[cacheSize];
     int loads = 0, loadHits = 0, stores = 0, storeHits = 0, currentIsHit;
 
@@ -46,15 +48,17 @@ int main(int argc, const char * argv[]) {
 
     while (getline(traceFile, currentTraceLineBuffer)) {
       struct traceLine currentTraceLine = readTraceLine(currentTraceLineBuffer);
-      currentIsHit = cacheSearch(configDataFilled.associativity, intToBinaryString(currentTraceLine.address), cache, cacheSize);
+      currentIsHit = cacheSearch(configDataFilled.associativity, intToBinaryString(currentTraceLine.address), cache, cachedElements);
       if (currentTraceLine.storeOrLoad == 's') {
         stores++;
 	storeHits += currentIsHit;
-	writeToCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache);
+	if (!currentIsHit)
+	  writeToCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache, cacheSize, &cachedElements, &fifoCacheLocation);
       } else if (currentTraceLine.storeOrLoad == 'l') {
 	loads++;
 	loadHits += currentIsHit;
-	readFromCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache);
+	if (!currentIsHit)
+	  readFromCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache, cacheSize, &cachedElements, &fifoCacheLocation);
       } else {
 	cout << "wtf?" << endl;
       }
@@ -64,11 +68,19 @@ int main(int argc, const char * argv[]) {
     outFile << (float) ((float) loadHits / (float) loads) << endl; // Second output line: Load hit rate
     outFile << (float) ((float) storeHits / (float) stores) << endl; // Third output line: Store hit rate
 
+    // cout << (int) cacheSearch(configDataFilled.associativity, "00011111111111111111011001000000", cache, cachedElements) << endl;
+    
+    cerr << cacheSize << endl;
+
+    for(int j=0; j<cachedElements; j++) {
+      cout << cache[j] << endl;
+    }
+
     return 0;
 }
 
 
-void writeToCache(struct configData configDataFilled, struct addressSegments addressSegmentSizes, struct traceLine traceLineInfo, string cache[])
+void writeToCache(struct configData configDataFilled, struct addressSegments addressSegmentSizes, struct traceLine traceLineInfo, string cache[], int cacheSize, int *cachedElements, int *fifoCacheLocation)
 {
     // if (configDataFilled.writeMissPolicy == NO_WRITE_ALLOCATE) {
     //   noWriteAllocate_write(configDataFilled, addressSegmentSizes, traceLineInfo.address, cache);
@@ -77,18 +89,20 @@ void writeToCache(struct configData configDataFilled, struct addressSegments add
     // }
 }
 
-void readFromCache(struct configData configDataFilled, struct addressSegments addressSegmentSizes, struct traceLine traceLineInfo, string cache[])
+void readFromCache(struct configData configDataFilled, struct addressSegments addressSegmentSizes, struct traceLine traceLineInfo, string cache[], int cacheSize, int *cachedElements, int *fifoCacheLocation)
 {
-  // TODO
+  addElemToCache(configDataFilled, intToBinaryString(traceLineInfo.address), cache, cacheSize, cachedElements, fifoCacheLocation);
 }
 
 string intToBinaryString(unsigned int in)
 {
   string bin = "01";
+  int len = 32;
   string result;
   do {
     result = bin[in % 2] + result;
     in /= 2;
-  } while(in);
+    len--;
+  } while(in || len);
   return result;
 }

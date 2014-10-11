@@ -29,6 +29,8 @@
 #define ADDRESS_SIZE 32
 #define NO_WRITE_ALLOCATE 0
 #define WRITE_ALLOCATE 1
+#define RANDOM_REPLACEMENT 0
+#define FIFO_REPLACEMENT 1
 
 using namespace std;
 
