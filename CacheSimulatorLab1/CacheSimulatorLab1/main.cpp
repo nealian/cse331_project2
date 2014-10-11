@@ -39,7 +39,8 @@ int main(int argc, const char * argv[]) {
 							  configDataFilled.associativity ? log(configDataFilled.cacheSize*1024 / (configDataFilled.associativity * configDataFilled.blockSize)) / log(2) : 0,
 							  ADDRESS_SIZE - (log(configDataFilled.blockSize) / log(2)) - (configDataFilled.associativity ? (log(configDataFilled.cacheSize*1024 / (configDataFilled.associativity * configDataFilled.blockSize)) / log(2)) : 0)};
     int cacheSize = configDataFilled.cacheSize * 1024 / ADDRESS_SIZE;
-    int cachedElements = 0, fifoCacheLocation = 0;
+    int *cachedElements = calloc(cacheSize / (configDataFilled.associativity ? configDataFilled.associativity : 1),  sizeof(int));
+    int *fifoCacheLocation = calloc(cacheSize / (configDataFilled.associativity ? configDataFilled.associativity : 1), sizeof(int));
     string cache[cacheSize];
     int loads = 0, loadHits = 0, stores = 0, storeHits = 0, currentIsHit;
 
@@ -53,12 +54,12 @@ int main(int argc, const char * argv[]) {
         stores++;
 	storeHits += currentIsHit;
 	if (!currentIsHit)
-	  writeToCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache, cacheSize, &cachedElements, &fifoCacheLocation);
+	  writeToCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache, cacheSize, cachedElements, fifoCacheLocation);
       } else if (currentTraceLine.storeOrLoad == 'l') {
 	loads++;
 	loadHits += currentIsHit;
 	if (!currentIsHit)
-	  readFromCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache, cacheSize, &cachedElements, &fifoCacheLocation);
+	  readFromCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache, cacheSize, cachedElements, fifoCacheLocation);
       } else {
 	cout << "wtf?" << endl;
       }
@@ -97,7 +98,7 @@ void readFromCache(struct configData configDataFilled, struct addressSegments ad
 string intToBinaryString(unsigned int in)
 {
   string bin = "01";
-  int len = 32;
+  int len = ADDRESS_SIZE;
   string result;
   do {
     result = bin[in % 2] + result;

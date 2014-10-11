@@ -18,7 +18,7 @@
 
 #include "CacheUpdate.h"
 
-void addElemToCache(struct configData configDataFilled, string elem, string cache[], int cacheSize, int cachedElements[], int fifoCacheLocation[])
+void addElemToCache(struct configData configDataFilled, string elem, string cache[], int cacheSize, int *cachedElements, int *fifoCacheLocation)
 {
   if (*cachedElements < cacheSize) {
     cache[(*cachedElements)++] = elem;
@@ -33,6 +33,24 @@ void addElemToCache(struct configData configDataFilled, string elem, string cach
   }
 }
 
+void addElemToCacheNWay(struct configData configDataFilled, struct addressSegments addressSegmentSizes, string elem, string cache[], int cacheSize, int cachedElements[], int fifoCacheLocation[])
+{
+  int numSets = cacheSize / configDataFilled.associativity;
+  int curSet = stoi(getSetIndex(addressSegmentSizes, elem), 2);
+  if (cachedElements[curSet] < configDataFilled.associativity) {
+    cache[curSet * configDataFilled.associativity + cachedElements[curSet]++];
+    fifoCacheLocation[curSet]++;
+  } else {
+    if (configDataFilled.replacementPolicy == RANDOM_REPLACEMENT) {
+      evictAndReplaceRandomNWay(elem, cache, configDataFilled.associativity, curSet);
+    } else if (configDataFilled.replacementPolicy == FIFO_REPLACEMENT) {
+      evictAndReplaceFifoNWay(elem, cache, configDataFilled.associativity, curSet, fifoCacheLocation[curSet]);
+    } else {
+      cout << "wtf?" << endl;
+    }
+  }
+}
+
 void evictAndReplaceRandom(string elem, string cache[], int cacheSize)
 {
   int cacheReplace = rand() % cacheSize;
@@ -42,4 +60,15 @@ void evictAndReplaceRandom(string elem, string cache[], int cacheSize)
 void evictAndReplaceFifo(string elem, string cache[], int fifoCacheLocation)
 {
   cache[fifoCacheLocation] = elem;
+}
+
+void evictAndReplaceRandomNWay(string elem, string cache[], int associativity, int curSet)
+{
+  int cacheReplace = rand() % associativity;
+  cache[associativity * curSet + cacheReplace] = elem;
+}
+
+void evictAndReplaceFifoNWay(string elem, string cache[], int associativity, int curSet, int fifoCacheLocation)
+{
+  cache[associativity * curSet + fifoCacheLocation] = elem;
 }
