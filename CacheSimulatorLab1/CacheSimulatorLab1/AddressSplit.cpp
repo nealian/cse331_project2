@@ -1,10 +1,20 @@
-//
-//  AddressSplit.cpp
-//  CacheSimulatorLab1
-//
-//  Created by Cristobal Gallegos on 10/4/14.
-//  Copyright (c) 2014 Cristobal Gallegos. All rights reserved.
-//
+/*************************************************************************
+/
+/ filename: AddressSplit.cpp
+/
+/ description: 
+/
+/ authors: Neal, Ian
+/ Gallegos, Cristobal
+/
+/ class: CSE 331
+/ instructor: Zheng
+/ assignment: Lab Project #2
+/
+/ assigned: Oct 2, 2014
+/ due: Oct 16, 2014
+/
+/************************************************************************/
 
 #include "AddressSplit.h"
 
@@ -25,8 +35,9 @@ struct configData readConfig(string filename)
     getline(file, lineBuffer); // First line is block size (line size); non-negative power of 2
     configDataFilled.blockSize = stoi(lineBuffer);
     
-    getline(file, lineBuffer); // Second line is associativity; 0 or 1
-    configDataFilled.associativity = (char) stoi(lineBuffer);
+    getline(file, lineBuffer); // Second line is associativity; 0 = fully associative, 1 = direct-mapped,
+                               // otherwise, # of ways associative
+    configDataFilled.associativity = stoi(lineBuffer);
     
     getline(file, lineBuffer); // Third line is cache size (data size); non-negative power of 2, in KB
     configDataFilled.cacheSize = stoi(lineBuffer);
@@ -44,16 +55,16 @@ struct configData readConfig(string filename)
     return configDataFilled;
 }
 
-void test(struct configData configDataFilled)
+struct traceLine readTraceLine(string line)
 {
-    cout << configDataFilled.blockSize << endl;
-    cout << (int) configDataFilled.associativity << endl;
-    cout << configDataFilled.cacheSize << endl;
-    cout << (int) configDataFilled.replacementPolicy << endl;
-    cout << configDataFilled.missPenalty << endl;
-    cout << (int) configDataFilled.writeMissPolicy << endl;
-}
+  struct traceLine traceLineInfo;
 
+  if (3 == sscanf(line.c_str(), "%c %x %u", &(traceLineInfo.storeOrLoad), &(traceLineInfo.address), &(traceLineInfo.numInstructionsBefore)))
+    return traceLineInfo;
+
+  cout << "whoops!" << endl;
+  exit(1);
+}
 
 
 

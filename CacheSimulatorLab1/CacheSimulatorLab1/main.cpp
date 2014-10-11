@@ -1,26 +1,94 @@
-//
-//  main.cpp
-//  CacheSimulatorLab1
-//
-//  Created by Cristobal Gallegos on 10/4/14.
-//  Copyright (c) 2014 Cristobal Gallegos. All rights reserved.
-//
+/*************************************************************************
+/
+/ filename: main.cpp
+/
+/ description: 
+/
+/ authors: Neal, Ian
+/ Gallegos, Cristobal
+/
+/ class: CSE 331
+/ instructor: Zheng
+/ assignment: Lab Project #2
+/
+/ assigned: Oct 2, 2014
+/ due: Oct 16, 2014
+/
+/************************************************************************/
 
 #include <iostream>
+#include <iomanip>
 #include "AddressSplit.h"
+#include "NoWriteAllocate.h"
+#include "SearchCache.h"
+
 using namespace std;
 
-int main(int argc, const char * argv[]) {
-    string filename = argv[1]; // Filename is the first argument to the program
-    struct configData configDataFilled = readConfig(filename);
-    uint32_t *cache = (uint32_t *) malloc(configDataFilled.cacheSize);
-    const int blockIndexSize = log(configDataFilled.blockSize) / log(2);
-    const int setIndexSize = log(configDataFilled.cacheSize*1024 / (2 * configDataFilled.blockSize)) / log(2);
-    const int tagSize = ADDRESS_SIZE - blockIndexSize - setIndexSize;
+void writeToCache(struct configData, struct addressSegments, struct traceLine, string []);
+void readFromCache(struct configData, struct addressSegments, struct traceLine, string []);
+string intToBinaryString(unsigned int);
 
-    cout << blockIndexSize << endl;
-    cout << setIndexSize << endl;
-    cout << tagSize << endl;
+int main(int argc, const char * argv[]) {
+    string configFilename = argv[1]; // Config file is the first argument to the program
+    string traceFilename = argv[2]; // Trace file is the second (and last) argument to the program
+    ifstream traceFile (traceFilename);
+    ofstream outFile (traceFilename + ".out");
+    struct configData configDataFilled = readConfig(configFilename);
+    const struct addressSegments addressSegmentsFilled = {log(configDataFilled.blockSize) / log(2),
+							  configDataFilled.associativity ? log(configDataFilled.cacheSize*1024 / (configDataFilled.associativity * configDataFilled.blockSize)) / log(2) : 0,
+							  ADDRESS_SIZE - (log(configDataFilled.blockSize) / log(2)) - (log(configDataFilled.cacheSize*1024 / (configDataFilled.associativity * configDataFilled.blockSize)) / log(2))};
+    int cacheSize = configDataFilled.cacheSize * 1024 / ADDRESS_SIZE;
+    string cache[cacheSize];
+    int loads = 0, loadHits = 0, stores = 0, storeHits = 0, currentIsHit;
+
+    string currentTraceLineBuffer;
+    
+
+    while (getline(traceFile, currentTraceLineBuffer)) {
+      struct traceLine currentTraceLine = readTraceLine(currentTraceLineBuffer);
+      currentIsHit = cacheSearch(configDataFilled.associativity, intToBinaryString(currentTraceLine.address), cache, cacheSize);
+      if (currentTraceLine.storeOrLoad == 's') {
+        stores++;
+	storeHits += currentIsHit;
+	writeToCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache);
+      } else if (currentTraceLine.storeOrLoad == 'l') {
+	loads++;
+	loadHits += currentIsHit;
+	readFromCache(configDataFilled, addressSegmentsFilled, currentTraceLine, cache);
+      } else {
+	cout << "wtf?" << endl;
+      }
+    }
+
+    outFile << (float) ((float) (storeHits + loadHits) / (float) (stores + loads)) << endl; // First output line: Total hit rate
+    outFile << (float) ((float) loadHits / (float) loads) << endl; // Second output line: Load hit rate
+    outFile << (float) ((float) storeHits / (float) stores) << endl; // Third output line: Store hit rate
 
     return 0;
+}
+
+
+void writeToCache(struct configData configDataFilled, struct addressSegments addressSegmentSizes, struct traceLine traceLineInfo, string cache[])
+{
+    // if (configDataFilled.writeMissPolicy == NO_WRITE_ALLOCATE) {
+    //   noWriteAllocate_write(configDataFilled, addressSegmentSizes, traceLineInfo.address, cache);
+    // } else {
+    //   //      writeAllocate_write(configDataFilled, addressSegmentSizes, traceLineInfo.address, cache);
+    // }
+}
+
+void readFromCache(struct configData configDataFilled, struct addressSegments addressSegmentSizes, struct traceLine traceLineInfo, string cache[])
+{
+  // TODO
+}
+
+string intToBinaryString(unsigned int in)
+{
+  string bin = "01";
+  string result;
+  do {
+    result = bin[in % 2] + result;
+    in /= 2;
+  } while(in);
+  return result;
 }

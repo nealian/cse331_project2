@@ -1,10 +1,20 @@
-//
-//  AddressSplit.h
-//  CacheSimulatorLab1
-//
-//  Created by Cristobal Gallegos on 10/4/14.
-//  Copyright (c) 2014 Cristobal Gallegos. All rights reserved.
-//
+/*************************************************************************
+/
+/ filename: AddressSplit.h
+/
+/ description: 
+/
+/ authors: Neal, Ian
+/ Gallegos, Cristobal
+/
+/ class: CSE 331
+/ instructor: Zheng
+/ assignment: Lab Project #2
+/
+/ assigned: Oct 2, 2014
+/ due: Oct 16, 2014
+/
+/************************************************************************/
 
 #ifndef __CacheSimulatorLab1__AddressSplit__
 #define __CacheSimulatorLab1__AddressSplit__
@@ -13,12 +23,12 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <unistd.h>
 #include <cmath>
 
 
 #define ADDRESS_SIZE 32
-
+#define NO_WRITE_ALLOCATE 0
+#define WRITE_ALLOCATE 1
 
 using namespace std;
 
@@ -27,13 +37,27 @@ struct configData
     unsigned int blockSize;
     unsigned int cacheSize;
     unsigned int missPenalty;
-    char associativity;
+    unsigned int associativity;
     char writeMissPolicy;
     char replacementPolicy;
 };
 
+struct addressSegments
+{
+  int blockIndexSize;
+  int setIndexSize;
+  int tagSize;
+};
+
+struct traceLine
+{
+  char storeOrLoad;
+  unsigned int address;
+  unsigned int numInstructionsBefore;
+};
+
 struct configData readConfig(string);
-void test(struct configData);
+struct traceLine readTraceLine(string);
 
 #endif /* defined(__CacheSimulatorLab1__AddressSplit__) */
 
