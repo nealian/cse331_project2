@@ -11,8 +11,16 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-    string filename = "../../CSE331-F14-Project2/sample.conf";
+    string filename = argv[1]; // Filename is the first argument to the program
     struct configData configDataFilled = readConfig(filename);
-    test(configDataFilled);
+    uint32_t *cache = (uint32_t *) malloc(configDataFilled.cacheSize);
+    const int blockIndexSize = log(configDataFilled.blockSize) / log(2);
+    const int setIndexSize = log(configDataFilled.cacheSize*1024 / (2 * configDataFilled.blockSize)) / log(2);
+    const int tagSize = ADDRESS_SIZE - blockIndexSize - setIndexSize;
+
+    cout << blockIndexSize << endl;
+    cout << setIndexSize << endl;
+    cout << tagSize << endl;
+
     return 0;
 }

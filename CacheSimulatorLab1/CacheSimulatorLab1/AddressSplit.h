@@ -13,6 +13,12 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <unistd.h>
+#include <cmath>
+
+
+#define ADDRESS_SIZE 32
+
 
 using namespace std;
 
