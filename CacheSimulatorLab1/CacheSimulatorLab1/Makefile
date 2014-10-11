@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -ansi -pedantic -g
+CXXFLAGS = -Wall -ansi -pedantic -g -std=c++11
 
 all: CacheSimulatorLab1
 
