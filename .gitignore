@@ -47,3 +47,6 @@ DerivedData
 .idea/
 *.xcodeproj
 *.dSYM
+
+# binary
+CacheSimulatorLab1/CacheSimulatorLab1/CacheSimulatorLab1
