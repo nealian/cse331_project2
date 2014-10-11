@@ -66,6 +66,14 @@ struct traceLine readTraceLine(string line)
   exit(1);
 }
 
+string getSetIndex(struct addressSegments addressSegmentSizes, string address)
+{
+  return address.substr(addressSegmentSizes.tagSize, addressSegmentSizes.setIndexSize);
+}
 
+string getTag(struct addressSegments addressSegmentSizes, string address)
+{
+  return address.substr(0, addressSegmentSizes.tagSize);
+}
 
 

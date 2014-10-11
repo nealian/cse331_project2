@@ -21,7 +21,7 @@
 int cacheSearch(unsigned int associativity, string searchItem, string cache[], int numCacheItems)
 {
   if (associativity) {
-    return nWaySearch(searchItem, cache, numCacheItems);
+    return nWaySearch(associativity, searchItem, cache, numCacheItems);
   } else {
     return fullyAssociativeSearch(searchItem, cache, numCacheItems);
   }
@@ -36,7 +36,8 @@ int fullyAssociativeSearch(string searchItem, string cache[], int numCacheItems)
   return 0;
 }
 
-int nWaySearch(string searchItem, string cache[], int numCacheItems)
+int nWaySearch(unsigned int associativity, string searchItem, int cacheSize, string cache[], int numCacheItems[])
 {
+  
   return 0;
 }

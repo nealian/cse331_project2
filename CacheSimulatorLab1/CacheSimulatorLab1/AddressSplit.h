@@ -60,6 +60,8 @@ struct traceLine
 
 struct configData readConfig(string);
 struct traceLine readTraceLine(string);
+string getSetIndex(struct addressSegments addressSegmentSizes, string address);
+string getTag(struct addressSegments addressSegmentSizes, string address);
 
 #endif /* defined(__CacheSimulatorLab1__AddressSplit__) */
 

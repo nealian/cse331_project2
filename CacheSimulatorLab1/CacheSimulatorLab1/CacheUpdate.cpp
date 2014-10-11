@@ -18,7 +18,7 @@
 
 #include "CacheUpdate.h"
 
-void addElemToCache(struct configData configDataFilled, string elem, string cache[], int cacheSize, int *cachedElements, int *fifoCacheLocation)
+void addElemToCache(struct configData configDataFilled, string elem, string cache[], int cacheSize, int cachedElements[], int fifoCacheLocation[])
 {
   if (*cachedElements < cacheSize) {
     cache[(*cachedElements)++] = elem;
