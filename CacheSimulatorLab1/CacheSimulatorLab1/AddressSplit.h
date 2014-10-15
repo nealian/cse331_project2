@@ -1,6 +1,6 @@
 /*************************************************************************
 /
-/ filename: AddressSplit.h
+/ filename: 
 /
 / description: 
 /
@@ -14,7 +14,7 @@
 / assigned: Oct 2, 2014
 / due: Oct 16, 2014
 /
-/************************************************************************/
+ ************************************************************************/
 
 #ifndef __CacheSimulatorLab1__AddressSplit__
 #define __CacheSimulatorLab1__AddressSplit__
@@ -46,9 +46,9 @@ struct configData
 
 struct addressSegments
 {
-  int blockIndexSize;
-  int setIndexSize;
-  int tagSize;
+  unsigned int blockIndexSize;
+  unsigned int setIndexSize;
+  unsigned int tagSize;
 };
 
 struct traceLine
