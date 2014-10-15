@@ -73,7 +73,8 @@ int main(int argc, const char * argv[]) {
     outFile << (float) ((float) (storeHits + loadHits) / (float) (stores + loads)) << endl; // First output line: Total hit rate
     outFile << (float) ((float) loadHits / (float) loads) << endl; // Second output line: Load hit rate
     outFile << (float) ((float) storeHits / (float) stores) << endl; // Third output line: Store hit rate
-    outFile << (otherOperations + (storeHits + loadHits) + ((stores + loads) - (storeHits + loadHits)) * configDataFilled.missPenalty) << endl;
+    outFile << (otherOperations + (storeHits + loadHits) + ((stores + loads) - (storeHits + loadHits)) * configDataFilled.missPenalty) << endl; // Fourth output line: Total run time in cycles (we're assuming that the last trace line entry is in cycles)
+    outFile << (float) (1 + (1 - (float) ((float) (storeHits + loadHits) / (float) (stores + loads))) * configDataFilled.missPenalty) << endl; // Fifth (last) output line: Average memory access latency, in cycles, with a hit as 1 cycle. (Using 1 - hit rate as miss rate)
 
     // cout << (int) cacheSearch(configDataFilled.associativity, addressSegmentsFilled, "00011111111111111111011001000000", cache, cachedElements) << endl;
     
